@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>测试</title>
+		<style>
+			#zm {
+				position: relative;
+				width: 220px;
+				height: 136px;
+			}
+			img {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				z-index: 20;
+			}
+			input {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				z-index: 10;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="zm">
+			<img src="zm.png" >
+			<input type="file" capture="camera" accept="image/*" class="file" data-type="1" />
+		</div>
+	</body>
+	<script src="jquery-1.11.3.min.js"></script>
+	<script>
+		$(function(){
+			$("#zm img").click(function(){
+				$("#zm input").trigger("click");
+			});
+			$("#zm input").change(function(){
+				
+				console.log(this.files[0]);
+				
+				var reader = new FileReader();
+				
+				reader.readAsDataURL(this.files[0]);
+				reader.onload = function() {
+					var result = this.result;
+					$("#zm img").attr("src", result);
+					var base64Img = result.split("base64,")[1];
+					
+					$.post(
+						'https://cloudapi.linkface.cn/identity/selfie_file',
+						{
+							'image_id':base64Img
+						},
+						function(data){
+							console.log(data);
+						}
+					)
+					
+					
+				
+				}
+
+//				console.log(this.files)
+//				var fd = new FormData();
+//				fd.append("file", this.files[0]);
+//				$("#zm img").attr("src", this.files[0].name);
+//				console.log(fd);
+				
+				
+			})
+		})
+	</script>
+</html>
